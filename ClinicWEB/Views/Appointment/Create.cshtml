@@ -1,0 +1,107 @@
+﻿@model ClinicWEB.Models.Appointment
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+
+<link href="~/css/My_Css.css" type="text/css" rel="stylesheet" />
+
+<h2>Добавить запись в медкарту</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Doctor.FullName" class="control-label"></label>
+                <select id="doctorsAppointment" asp-for="DoctorId" class="form-control" asp-items="ViewBag.DoctorId">
+                    <option style="display:none"></option>
+                </select>
+            </div>
+            <div style="text-align:right">
+                <input id="spec" style="text-align:right;" readonly="readonly" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Patient.FullName" class="control-label"></label>
+                <select id="patientsAppointment" asp-for="PatientId" class="form-control" asp-items="@(new SelectList("","Id","FullName"))"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Diagnosis" class="control-label"></label>
+                <input asp-for="Diagnosis" class="form-control" />
+                <span asp-validation-for="Diagnosis" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateTime" class="control-label"></label>
+                <input id="DateT" asp-for="DateTime" class="form-control" readonly="readonly" />
+                <span asp-validation-for="DateTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-controller="Home" asp-action="Index">Вернуться в меню</a>
+</div>
+
+
+
+
+<script>
+    $(function () {
+        $("#doctorsAppointment").change(function () {
+            $.getJSON("/Appointment/GetPatients", { id: $("#doctorsAppointment").val() }, function (data) {
+                var items = "";
+                $("#patientsAppointment").empty();
+                $.each(data, function (i, row) {
+                    items += "<option value=" + row.value + ">" + row.text + "</option>";
+                });
+                $("#patientsAppointment").html(items);
+
+                $.getJSON("/Appointment/GetSpecializations", { DoctorId: $("#doctorsAppointment").val() }, function (d) {
+                    $("#spec").val(d);
+                });
+
+                var param = $("#patientsAppointment").val();
+                if (param) {
+                    $(function () {
+                        $.getJSON("/Appointment/GetDate", { PatientId: $("#patientsAppointment").val(), DoctorId: $("#doctorsAppointment").val() },
+                            function (data) {
+                                $("#DateT").val(data);
+                            });
+                    });
+                }
+                else {
+                    $("#patientsAppointment").html("<option>Нет записей</option>");
+                    $("#DateT").val('');
+                }
+
+            });
+        });
+    });
+
+</script>
+
+
+<script>
+    $(function () {
+        $("#patientsAppointment").change(function () {
+            $.getJSON("/Appointment/GetDate", { PatientId: $("#patientsAppointment").val(), DoctorId: $("#doctorsAppointment").val() },
+                function (data) {
+                    $("#DateT").val(data);
+                });
+        });
+    });
+
+</script>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

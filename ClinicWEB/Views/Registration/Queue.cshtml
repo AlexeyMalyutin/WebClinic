@@ -1,0 +1,79 @@
+﻿@model ClinicWEB.Models.Registration
+
+@{
+    ViewData["Title"] = "Queue";
+}
+
+
+
+<h2>Очередь</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+
+            <div class="form-group">
+                <label asp-for="Doctor.Specialization" class="control-label"></label>
+                <select id="Specialzation" asp-for="Doctor.Specialization" class="form-control" asp-items="ViewBag.Specializations" name="specialization">
+                    <option style="display:none"></option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Doctor.FullName" class="control-label"></label>
+                <select id="Doctor" asp-for="DoctorId" class="form-control" asp-items="@(new SelectList("","Id","FullName"))"></select>
+            </div>
+            <h4>Данные за текущий месяц</h4>
+            <div class="form-group">
+                Пациентов в очереди: <input id="Queue" type="text" class="form-control" value="выберите врача" readonly style="text-align:right;width:50%;box-shadow:none;outline:none;border:none;border-bottom:2px solid;background-color:#ffffff" />
+            </div>
+            <div class="form-group">
+                Нагрузка врача: <input id="Workload" type="text" class="form-control" value="выберите врача" readonly style="text-align:right;width:50%;box-shadow:none;outline:none;border:none;border-bottom:2px solid;background-color:#ffffff" />
+            </div>
+
+            @*<a href="#" class="btn btn-outline-dark">???</a>*@
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-controller="Home" asp-action="Index">Вернуться в меню</a>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    $(function () {
+        $("#Specialzation").change(function () {
+            $.getJSON("/Registration/GetDoctors", { specialization: $("#Specialzation").val() }, function (data) {
+                var items = "";
+                $("#Doctor").empty();
+                $.each(data, function (i, row) {
+                    items += "<option value=" + row.value + ">" + row.text + "</option>";
+                });
+                $("#Doctor").html(items);
+
+                $.getJSON("/Registration/GetQueueCount", { DoctorId: $("#Doctor").val() }, function (d) {
+                    $("#Queue").val(d);
+                });
+                $.getJSON("/Appointment/GetWorkload", { DoctorId: $("#Doctor").val() }, function (dat) {
+                    $("#Workload").val(dat);
+                });
+            });
+        });
+    });
+</script>
+
+<script>
+    $("#Doctor").change(function () {
+        $.getJSON("/Registration/GetQueueCount", { DoctorId: $("#Doctor").val() }, function (d) {
+            $("#Queue").val(d);
+        });
+        $.getJSON("/Appointment/GetWorkload", { DoctorId: $("#Doctor").val() }, function (dat) {
+            $("#Workload").val(dat);
+        });
+    });
+</script>
+

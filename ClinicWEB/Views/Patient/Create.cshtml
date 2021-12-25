@@ -1,0 +1,73 @@
+﻿@model ClinicWEB.Models.Patient
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+@Html.ValidationSummary(true)
+
+@if (ViewBag.IsFailed)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Пользователь с такими данными уже добавлен!</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
+<h2>Добавить пациента</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FullName" class="control-label"></label>
+                <input id="Patient" asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Birthday" class="control-label"></label>
+                <input id="PatBirth" type="date" asp-for="Birthday" class="form-control" />
+                <span asp-validation-for="Birthday" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input id="submitbtn" type="submit" value="Добавить" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-controller="Home" asp-action="Index">Вернуться в меню</a>
+</div>
+
+
+@if (ViewBag.Err != null)
+{
+    <div class="alert alert-danger">
+        <p>@ViewBag.Err</p>
+    </div>
+
+}
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+
+    var minDate = new Date(1900, 1, 1);
+    myMinDate = minDate.toISOString().split('T')[0];
+    $("#PatBirth").attr('min', myMinDate);
+
+    var maxDate = new Date();
+    maxDate.setFullYear(maxDate.getFullYear() - 18);
+    myMaxDate = maxDate.toISOString().split('T')[0];
+    $("#PatBirth").attr('max', myMaxDate);
+</script>
+

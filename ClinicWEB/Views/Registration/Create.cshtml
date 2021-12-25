@@ -1,0 +1,109 @@
+﻿@model ClinicWEB.Models.Registration
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+
+@if (ViewBag.IsFailed)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Вы уже записаны на приём к этому врачу!</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
+<h2>Регистрация на приём</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Patient.FullName" class="control-label"></label>
+                <select id="Patients" asp-for="PatientId" class="form-control" asp-items="ViewBag.PatientId">
+                    <option style="display:none"></option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Doctor.Specialization" class="control-label"></label>
+                <select id="Spec" asp-for="Doctor.Specialization" class="form-control" asp-items="ViewBag.Specializations" name="specialization">
+                    <option style="display:none"></option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Doctor.FullName" class="control-label"></label>
+                <select id="Doctors" asp-for="DoctorId" class="form-control" asp-items="@(new SelectList("","Id","FullName"))"></select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DateTime" class="control-label"></label>
+                <input id="RegDate" type="date" asp-for="DateTime" class="form-control" />
+                <span asp-validation-for="DateTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input id="CreateBtn" type="submit" value="Добавить" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-controller="Home" asp-action="Index">Вернуться в меню</a>
+</div>
+
+
+
+<script>
+    $(function () {
+        $("#Spec").change(function () {
+            $.getJSON("/Registration/GetDoctors", { specialization: $("#Spec").val() }, function (data) {
+                var items = "";
+                $("#Doctors").empty();
+                $.each(data, function (i, row) {
+                    items += "<option value=" + row.value + ">" + row.text + "</option>";
+                });
+                $("#Doctors").html(items);
+            });
+        });
+    });
+</script>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+
+    <script type="text/javascript">
+        function openSuccessModal(strMsg) {
+            var myDiv = document.getElementById("myModalSuccessAlertBody");
+            myDiv.innerHTML = strMsg;
+            $("#myModalSuccess").modal('show');
+        }
+
+        $(document).ready(function () {
+            var msg = "@TempData["SuccessMessage"]";
+            if (msg) {
+                openSuccessModal(msg);
+            }
+        });
+
+    </script>
+}
+
+<script>
+    var tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    var minDate = tomorrow.toISOString().split('T')[0];
+    $("#RegDate").attr('min', minDate);
+
+    var inMonth = new Date();
+    inMonth.setMonth(inMonth.getMonth() + 2);
+    var maxDate = inMonth.toISOString().split('T')[0];
+    $("#RegDate").attr('max', maxDate);
+</script>

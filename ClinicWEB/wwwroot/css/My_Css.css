@@ -1,0 +1,30 @@
+﻿
+#DateT:focus{
+    box-shadow:none;
+}
+
+#iconId {
+    margin-left: 0px;
+}
+
+#DateT[readonly] {
+    border: none;
+    border-radius: 0px 0px 0px 0px;
+    border-bottom: 2px solid #000000;
+    background-color: #ffffff;
+    color: #000000;
+}
+
+#spec[readonly] {
+    border: none;
+    border-radius: 0px 0px 0px 0px;
+    border-bottom: 2px solid #000000;
+    background-color: #ffffff;
+    color: #000000;
+}
+
+#spec:focus {
+    box-shadow: none;
+    outline:none;
+}
+

@@ -1,0 +1,56 @@
+﻿@model ClinicWEB.Models.Appointment
+
+@{
+    ViewData["Title"] = "Epidemic";
+}
+
+<h1>Контроль эпидемии</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Diagnosis" class="control-label"></label>
+                <select id="Diagnosis" asp-for="Diagnosis" class="form-control" asp-items="@ViewBag.Epidemics">
+                    <option style="display:none"></option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                Количество заболевших: <input id="Epidemic" type="text" class="form-control" value="" readonly style="text-align:right;width:50%;box-shadow:none;outline:none;border:none;border-bottom:2px solid;background-color:#ffffff" />
+            </div>
+            <div class="form-group">
+                <input id="norma" type="text" class="form-control" value="" readonly style="font-size:30px;box-shadow:none;outline:none;border:none;background-color:#ffffff" />
+            </div>
+
+            @*<a href="#" class="btn btn-outline-dark">???</a>*@
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-controller="Home" asp-action="Index">Вернуться в меню</a>
+</div>
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    $(function () {
+        $("#Diagnosis").change(function () {
+            $.getJSON("/Appointment/GetIllCount", { diagnosis: $("#Diagnosis").val() }, function (dat) {
+                $("#Epidemic").val(dat);
+
+                
+                if (dat > 5) {
+                    $("#norma").val("Большое количество заболевших");
+                }
+                else {
+                    $("#norma").val("Норма");
+                }
+            });
+        });
+    });
+</script>

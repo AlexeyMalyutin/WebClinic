@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<div class="text-center mt-5">
+    <h1 class="display-4">Поликлиника</h1>
+    <div class="btn-group-vertical">
+        <div class="btn btn-group btn-md mt-3">
+            <a asp-controller="Patient" asp-action="Create" class="btn btn-outline-dark btn-block">Добавить пациента</a>
+        </div>
+        <div class="btn btn-group btn-md mt-3">
+            <a asp-controller="Registration" asp-action="Create" class="btn btn-outline-dark btn-md">Запись к врачу</a>
+        </div>
+        <div class="btn btn-group btn-md mt-3">
+            <a asp-controller="Registration" asp-action="Queue" class="btn btn-outline-dark btn-md">Очередь</a>
+        </div>
+        <div class="btn btn-group btn-md mt-3">
+            <a asp-controller="Sell" asp-action="Create" class="btn btn-outline-dark btn-md">Услуги</a>
+        </div>
+        <hr style="border:0;clear:both;display:block;width:100%;background-color:#000000;height:1px">
+        <div class="btn btn-group btn-md mt-3">
+            <a asp-controller="Appointment" asp-action="Epidemic" class="btn btn-outline-dark">Контроль эпидемии</a>
+        </div>
+        <div class="btn btn-group btn-md mt-3">
+            <a asp-controller="Appointment" asp-action="Create" class="btn btn-outline-dark">Приём</a>
+        </div>
+    </div>
+</div>
+
